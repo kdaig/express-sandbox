@@ -10,7 +10,8 @@ app.set("view engine", "ejs");
 //Schema SETUP
 var campgroundSchema = new mongoose.Schema({
     name: String,
-    image: String
+    image: String,
+    description: String
 });
 
 var Campground = mongoose.model("Campground", campgroundSchema);
@@ -21,7 +22,12 @@ var campgrounds = [
         {name: "White Water", image: "https://stmedia.stimg.co/Whitewater+SP+1.jpg?auto=compress&crop=faces"}
         ]
 
-app.get("/", function(req, res){
+app.get("/", function(req, res) {
+    res.render("landing");
+});
+
+//INDEX - show all campgrounds
+app.get("/campgrounds", function(req, res){
     Campground.find({}, function(err, allCampgrounds){
         if(err){
             console.log(err);
@@ -29,22 +35,18 @@ app.get("/", function(req, res){
             res.render("campgrounds", {campground:allCampgrounds});
         }
     });
-    //res.render("landing");
 });
 
-app.get("/campgrounds", function(req, res){
-      res.render("campgrounds", {campgrounds:campgrounds});
-});
 
-app.get("/campgrounds/new", function(req,res){
-    res.render("new.ejs");
-});
+// app.get("/campgrounds", function(req, res){
+//       res.render("campgrounds", {campgrounds:campgrounds});
+// });
 
+//Create -add new campgrounds to database
 app.post("/campgrounds", function(req, res){
     var name = req.body.name;
     var image = req.body.image;
     var newCampground = {name: name, image: image};
-    //campgrounds.push(newCampground);
     Campground.create(newCampground, function(err, newlyCreated){
         if(err){
             console.log(err);
@@ -54,6 +56,15 @@ app.post("/campgrounds", function(req, res){
     });
 });
 
+//New show form form to create new campground
+app.get("/campgrounds/new", function(req,res){
+    res.render("new.ejs");
+});
+
+app.get("/campgrounds/:id", function(req, res) {
+   res.send("This will be the show page!"); 
+});
+
 app.listen(process.env.PORT, process.env.IP, function(){
     console.log("The YelpCamp Server Has Started!!");
-})
+});
