@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 //Mongoose/Model Config
 var blogSchema = new mongoose.Schema({
     title: String,
-    iamge: String,
+    image: String,
     body: String,
     created:{type: Date, default: Date.now}
 });
@@ -49,6 +49,19 @@ app.post("/blogs",function(req, res){
         }
     });
 });
+
+// Show Route
+app.get("/blogs/:id", function(req, res) {
+   Blog.findById(req.params.id, function(err, foundBlog){
+       if(err){
+           res.redirect("/blogs");
+       } else {
+           res.render("show", {blog: foundBlog});
+       }
+   }); 
+});
+
+
 
 app.listen(process.env.PORT, process.env.IP, function(){
     console.log("Server is running!!");
